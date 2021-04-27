@@ -4,8 +4,9 @@
 #include<omp.h>
 #include<string.h>
 #include <iostream>
+#include "./headers/Parapix.h"
 
-void edgeDetection(char filename[],char output[]){
+void edgeDetection(char filename[],char output[], bool flag){
 
     int imageWidth;
     int imageHeight;
@@ -89,9 +90,8 @@ void edgeDetection(char filename[],char output[]){
 
     png_destroy_read_struct(&png, &info, NULL);
 
-
     int maskFilter[3][3]={-1,-2,-1,0,0,0,1,2,1};
-    
+
     int averageRed;
     int averageGreen;
     int averageBlue;
@@ -285,6 +285,112 @@ void edgeDetection(char filename[],char output[]){
             pixel[2] = maskedImageBlue[x];
             x++;
         }
+    }    
+    #pragma omp parallel shared(maskedImageBlue) private(i,j,ImageX,ImageY,MaskX,MaskY,averageRed,averageBlue,averageGreen)
+    {
+        #pragma omp for schedule(static)
+        for(i=0 ; i < imageHeight; i++){
+            for(j=0 ; j < imageWidth ; j++){
+                averageRed = 0;
+                averageGreen = 0;
+                averageBlue = 0;
+                for(ImageX = i-1, MaskX = 0; ImageX < (i+maskDimensions) && MaskX < maskDimensions ;ImageX++,MaskX++){
+                    if(ImageX!=-1){
+                        png_bytep row = imageRows[ImageX];
+                        for(ImageY = j-1, MaskY =0; ImageY < (j+maskDimensions) && MaskY < maskDimensions; ImageY++,MaskY++){
+                            png_bytep pixel = &(row[ImageY * 4]);
+                            if(ImageX >= 0 && ImageX < imageHeight && ImageY >= 0 && ImageY < imageWidth){
+                                averageRed += (pixel[0] * maskFilter[MaskX][MaskY]);
+                                averageGreen += (pixel[1] * maskFilter[MaskX][MaskY]);
+                                averageBlue += (pixel[2] * maskFilter[MaskX][MaskY]);
+                            }
+                        }
+                    }
+                }
+                if(averageRed < 0){
+                    averageRed = 0;
+                }
+                else if(averageRed > 255){
+                    averageRed = 255;
+                }
+                maskedImageRed[i*imageWidth + j]+= averageRed/9;
+
+                if(averageGreen < 0){
+                    averageGreen = 0;
+                }
+                else if(averageGreen > 255){
+                    averageGreen = 255;
+                }
+                maskedImageGreen[i*imageWidth + j] += averageGreen/9;
+
+                if(averageBlue < 0){
+                    averageBlue = 0;
+                }
+                else if(averageBlue > 255){
+                    averageBlue = 255;
+                }
+                maskedImageBlue[i*imageWidth + j] += averageBlue/9;
+            }
+        }
+    }
+    val=0;
+
+    maskFilter[0][0]=-1;
+    maskFilter[0][1]=-1;
+    maskFilter[0][2]=-1;
+    maskFilter[1][0]=-1;
+    maskFilter[1][1]=8;
+    maskFilter[1][2]=-1;
+    maskFilter[2][0]=-1;
+    maskFilter[2][1]=-1;
+    maskFilter[2][2]=-1;
+
+    #pragma omp parallel shared(maskedImageBlue) private(i,j,ImageX,ImageY,MaskX,MaskY,averageRed,averageBlue,averageGreen)
+    {
+        #pragma omp for schedule(static)
+        for(i=0 ; i < imageHeight; i++){
+            for(j=0 ; j < imageWidth ; j++){
+                averageRed = 0;
+                averageGreen = 0;
+                averageBlue = 0;
+                for(ImageX = i-1, MaskX = 0; ImageX < (i+maskDimensions) && MaskX < maskDimensions ;ImageX++,MaskX++){
+                    if(ImageX!=-1){
+                        png_bytep row = imageRows[ImageX];
+                        for(ImageY = j-1, MaskY =0; ImageY < (j+maskDimensions) && MaskY < maskDimensions; ImageY++,MaskY++){
+                            png_bytep pixel = &(row[ImageY * 4]);
+                            if(ImageX >= 0 && ImageX < imageHeight && ImageY >= 0 && ImageY < imageWidth){
+                                averageRed += (pixel[0] * maskFilter[MaskX][MaskY]);
+                                averageGreen += (pixel[1] * maskFilter[MaskX][MaskY]);
+                                averageBlue += (pixel[2] * maskFilter[MaskX][MaskY]);
+                            }
+                        }
+                    }
+                }
+                if(averageRed < 0){
+                    averageRed = 0;
+                }
+                else if(averageRed > 255){
+                    averageRed= 255;
+                }
+                maskedImageRed[i*imageWidth + j]+= averageRed/9;
+
+                if(averageGreen < 0){
+                    averageGreen = 0;
+                }
+                else if(averageGreen > 255){
+                    averageGreen = 255;
+                }
+                maskedImageGreen[i*imageWidth + j] += averageGreen/9;
+
+                if(averageBlue < 0){
+                    averageBlue = 0;
+                }
+                else if(averageBlue > 255){
+                    averageBlue = 255;
+                }
+                maskedImageBlue[i*imageWidth + j] += averageBlue/9;
+            }
+        }
     }
 
     image = fopen(output, "wb");
@@ -311,31 +417,22 @@ void edgeDetection(char filename[],char output[]){
         abort();
     }
 
-  png_init_io(png, image);
+    png_init_io(png, image);
 
-  png_set_IHDR(
-    png,
-    info,
-    imageWidth, imageHeight,
-    8,
-    PNG_COLOR_TYPE_RGBA,
-    PNG_INTERLACE_NONE,
-    PNG_COMPRESSION_TYPE_DEFAULT,
-    PNG_FILTER_TYPE_DEFAULT
-  );
+    png_set_IHDR(
+        png,
+        info,
+        imageWidth, imageHeight,
+        8,
+        PNG_COLOR_TYPE_RGBA,
+        PNG_INTERLACE_NONE,
+        PNG_COMPRESSION_TYPE_DEFAULT,
+        PNG_FILTER_TYPE_DEFAULT
+    );
 
     png_write_info(png, info);
     png_write_image(png, imageRows);
     png_write_end(png, NULL);
-
     fclose(image);
-
     png_destroy_write_struct(&png, &info);
-}
-
-int main() {
-    char fileName[]="./photo.png";
-    char output[]="./outpuOpenMP.png";
-    edgeDetection(fileName,output);
-    return 0;
 }
