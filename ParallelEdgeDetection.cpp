@@ -6,7 +6,7 @@
 #include <iostream>
 #include "./headers/Parapix.h"
 
-void edgeDetection(char filename[],char output[], bool flag){
+void edgeDetection(char filename[],char output[]){
 
     int imageWidth;
     int imageHeight;
@@ -435,4 +435,7 @@ void edgeDetection(char filename[],char output[], bool flag){
     png_write_end(png, NULL);
     fclose(image);
     png_destroy_write_struct(&png, &info);
+    free(maskedImageBlue);
+    free(maskedImageGreen);
+    free(maskedImageRed);
 }

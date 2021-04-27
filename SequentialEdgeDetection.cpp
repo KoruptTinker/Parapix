@@ -293,4 +293,7 @@ void edgeDetect(){
             x++;
         }
     }
+    free(maskedImageBlue);
+    free(maskedImageGreen);
+    free(maskedImageRed);
 }

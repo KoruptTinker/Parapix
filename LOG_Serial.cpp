@@ -6,6 +6,7 @@
 #include <omp.h>
 #include <string>
 #include <iostream>
+#include "./headers/Parapix.h"
 
 int imageWidth, imageHeight, imageDimensions;
 
@@ -151,7 +152,7 @@ void writeImageFile(char filename[])
   png_destroy_write_struct(&png, &info);
 }
 
-void maskRGB()
+void LOGSerial()
 {
   int maskDimensions = 5;
   int maskMatrix[5][5] = {0, 0, 1, 0, 0,
@@ -238,22 +239,17 @@ void maskRGB()
   free(maskedImageBlue);
 }
 
-void laplacianOfGaussian()
-{
-  maskRGB();
-}
+// int main()
+// {
+//   double startTime = omp_get_wtime();
+//   char inputImage[] = "./Image.png";
+//   char outputImage[] = "./LOG_Serial_Result.png";
 
-int main()
-{
-  double startTime = omp_get_wtime();
-  char inputImage[] = "./Image.png";
-  char outputImage[] = "./LOG_Serial_Result.png";
-
-  readImageFile(inputImage);
-  laplacianOfGaussian();
-  writeImageFile(outputImage);
-  double endTime = omp_get_wtime();
-  printf("%lf", endTime - startTime);
+//   readImageFile(inputImage);
+//   laplacianOfGaussian();
+//   writeImageFile(outputImage);
+//   double endTime = omp_get_wtime();
+//   printf("%lf", endTime - startTime);
   
-  return 0;
-}
+//   return 0;
+// }

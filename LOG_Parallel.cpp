@@ -6,8 +6,9 @@
 #include <omp.h>
 #include <string>
 #include <iostream>
+#include "./headers/Parapix.h"
 
-void laplacianOfGaussian(char filename[], char outputFileName[])
+void LOGParallel(char filename[], char outputFileName[])
 {
 
   int imageWidth, imageHeight, imageDimensions;
@@ -128,19 +129,19 @@ void laplacianOfGaussian(char filename[], char outputFileName[])
         averageR = 0;
         averageG = 0;
         averageB = 0;
-        for (int itImageX = i - maskDimensions / 2, itMaskX = 0; itImageX <= (i + maskDimensions / 2) && itMaskX < maskDimensions; itImageX++, itMaskX++)
+        for (ImageX = i - maskDimensions / 2, MaskX = 0; ImageX <= (i + maskDimensions / 2) && MaskX < maskDimensions; ImageX++, MaskX++)
         {
-          if (itImageX != -1)
+          if (ImageX != -1)
           {
-            png_bytep row = imageRowPointer[itImageX];
-            for (int itImageY = j - maskDimensions / 2, itMaskY = 0; itImageY <= (j + maskDimensions / 2) && itMaskY < maskDimensions; itImageY++, itMaskY++)
+            png_bytep row = imageRowPointer[ImageX];
+            for (ImageY = j - maskDimensions / 2, MaskY = 0; ImageY <= (j + maskDimensions / 2) && MaskY < maskDimensions; ImageY++, MaskY++)
             {
-              png_bytep px = &(row[itImageY * 4]);
-              if (itImageX >= 0 && itImageX < imageHeight && itImageY >= 0 && itImageY < imageWidth)
+              png_bytep px = &(row[ImageY * 4]);
+              if (ImageX >= 0 && ImageX < imageHeight && ImageY >= 0 && ImageY < imageWidth)
               {
-                averageR += (px[0] * maskMatrix[itMaskX][itMaskY]);
-                averageG += (px[1] * maskMatrix[itMaskX][itMaskY]);
-                averageB += (px[2] * maskMatrix[itMaskX][itMaskY]);
+                averageR += (px[0] * maskMatrix[MaskX][MaskY]);
+                averageG += (px[1] * maskMatrix[MaskX][MaskY]);
+                averageB += (px[2] * maskMatrix[MaskX][MaskY]);
               }
             }
           }
@@ -239,14 +240,14 @@ void laplacianOfGaussian(char filename[], char outputFileName[])
   png_destroy_write_struct(&png, &info);
 }
 
-int main()
-{
-  double startTime = omp_get_wtime();
-  char inputImage[] = "./Image.png";
-  char outputImage[] = "./LOG_Parallel_Result.png";
-  laplacianOfGaussian(inputImage, outputImage);
-  double endTime = omp_get_wtime();
-  printf("%lf", endTime - startTime);
+// int main()
+// {
+//   double startTime = omp_get_wtime();
+//   char inputImage[] = "./Image.png";
+//   char outputImage[] = "./LOG_Parallel_Result.png";
+//   laplacianOfGaussian(inputImage, outputImage);
+//   double endTime = omp_get_wtime();
+//   printf("%lf", endTime - startTime);
 
-  return 0;
-}
+//   return 0;
+// }
