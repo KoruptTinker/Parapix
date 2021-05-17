@@ -6,17 +6,17 @@
 #include <iostream>
 #include "./headers/Parapix.h"
 
-int imageWidth;
-int imageHeight;
-int imageDimensions;
-
 png_byte imageCType;
 png_byte imageBDepth;
 png_bytep *imageRows=NULL;
 
-void readImage(char fileName[]){
+void seqEdge(char inputName[], char outputName[]){
+    int imageWidth;
+    int imageHeight;
+    int imageDimensions;
+
     fflush(stdin);
-    FILE *image = fopen(fileName, "rb");
+    FILE *image = fopen(inputName, "rb");
     if(image==NULL){
         std::cout<<"Issue with file directory.";
         return;
@@ -74,49 +74,8 @@ void readImage(char fileName[]){
     png_read_image(png, imageRows);
     fclose(image);
     png_destroy_read_struct(&png, &info, NULL);
-}
 
-void writeImage(char fileName[]){
-    int y;
-    FILE *image=fopen(fileName,"wb");
-    if(!image){
-        std::cout<<"Cannot open ";
-        abort();
-    }
-    png_structp png=png_create_write_struct(PNG_LIBPNG_VER_STRING,NULL,NULL,NULL);
-    if(!png){
-        std::cout<<"Issue with PNG struct";
-        abort();
-    }
-    png_infop info=png_create_info_struct(png);
-    if(!info){
-        std::cout<<"Issue with info struct";
-        abort();
-    }
-    if(setjmp(png_jmpbuf(png))){
-        std::cout<<"Aborted"<<std::endl;
-        abort();
-    }
-    png_init_io(png,image);
-    png_set_IHDR(
-        png,
-        info,
-        imageWidth,
-        imageHeight,
-        8,
-        PNG_COLOR_TYPE_RGBA,
-        PNG_INTERLACE_NONE,
-        PNG_COMPRESSION_TYPE_DEFAULT,
-        PNG_FILTER_TYPE_DEFAULT
-    );
-    png_write_info(png,info);
-    png_write_image(png,imageRows);
-    png_write_end(png,NULL);
-    fclose(image);
-    png_destroy_write_struct(&png,&info);
-}
 
-void edgeDetect(){
     int maskFilter[3][3]={-1,-2,-1,0,0,0,1,2,1};
     int size=imageHeight*imageWidth;
     int *maskedImageRed=(int*)malloc(size*sizeof(int));
@@ -296,4 +255,42 @@ void edgeDetect(){
     free(maskedImageBlue);
     free(maskedImageGreen);
     free(maskedImageRed);
+
+
+    image=fopen(outputName,"wb");
+    if(!image){
+        std::cout<<"Cannot open ";
+        abort();
+    }
+    png=png_create_write_struct(PNG_LIBPNG_VER_STRING,NULL,NULL,NULL);
+    if(!png){
+        std::cout<<"Issue with PNG struct";
+        abort();
+    }
+    info=png_create_info_struct(png);
+    if(!info){
+        std::cout<<"Issue with info struct";
+        abort();
+    }
+    if(setjmp(png_jmpbuf(png))){
+        std::cout<<"Aborted"<<std::endl;
+        abort();
+    }
+    png_init_io(png,image);
+    png_set_IHDR(
+        png,
+        info,
+        imageWidth,
+        imageHeight,
+        8,
+        PNG_COLOR_TYPE_RGBA,
+        PNG_INTERLACE_NONE,
+        PNG_COMPRESSION_TYPE_DEFAULT,
+        PNG_FILTER_TYPE_DEFAULT
+    );
+    png_write_info(png,info);
+    png_write_image(png,imageRows);
+    png_write_end(png,NULL);
+    fclose(image);
+    png_destroy_write_struct(&png,&info);
 }

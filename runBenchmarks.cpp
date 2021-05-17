@@ -17,6 +17,7 @@ vector<string> generateFileList(string path){
 
 double calculateParallelEdge(vector<string> files, string inPath, string outPath){
     double total=0;
+    std::cout<<std::endl;
     for(int i=0;i<files.size();i++){
         double startTime=omp_get_wtime();
         string temp=inPath+files[i];
@@ -24,22 +25,27 @@ double calculateParallelEdge(vector<string> files, string inPath, string outPath
         string temp2=outPath+files[i];
         char* temp2Arr=&temp2[0];
         edgeDetection(tempArr,temp2Arr);
+        int percent=(100 * (i + 1)) / files.size();
+        std::cout << "\r" << "[" << std::string(percent / 5, (char)254u) << std::string(100 / 5 - percent / 5, ' ') << "]";
+		std::cout << percent << "%" << " [Image " << i + 1 << " of " << files.size() << "]";
         total+=omp_get_wtime()-startTime;
     }
     return total;
 }
 
-double calculateSequentialEdge(vector<string> files, string inPath, string outPath){
+double calculateSerialEdge(vector<string> files, string inPath, string outPath){
     double total=0;
+    std::cout<<std::endl;
     for(int i=0;i<files.size();i++){
         double startTime=omp_get_wtime();
         string tempPath=inPath+files[i];
         char* tempArray=&tempPath[0];
         string temp2Path=outPath+files[i];
         char* temp2Array=&temp2Path[0];
-        readImage(tempArray);
-        edgeDetect();
-        writeImage(temp2Array);
+        seqEdge(tempArray,temp2Array);
+        int percent=(100 * (i + 1)) / files.size();
+        std::cout << "\r" << "[" << std::string(percent / 5, (char)254u) << std::string(100 / 5 - percent / 5, ' ') << "]";
+		std::cout << percent << "%" << " [Image " << i + 1 << " of " << files.size() << "]";
         total+=omp_get_wtime()-startTime;
     }
     return total;
@@ -47,6 +53,7 @@ double calculateSequentialEdge(vector<string> files, string inPath, string outPa
 
 double calculateParallelLOG(vector<string> files,string inPath, string outPath){
     double total=0;
+    std::cout<<std::endl;
     for(int i=0;i<files.size();i++){
         double startTime=omp_get_wtime();
         string path=inPath+files[i];
@@ -54,13 +61,17 @@ double calculateParallelLOG(vector<string> files,string inPath, string outPath){
         string path2=outPath+files[i];
         char* temp2Array=&path2[0];
         LOGParallel(tempArray,temp2Array);
+        int percent=(100 * (i + 1)) / files.size();
+        std::cout << "\r" << "[" << std::string(percent / 5, (char)254u) << std::string(100 / 5 - percent / 5, ' ') << "]";
+		std::cout << percent << "%" << " [Image " << i + 1 << " of " << files.size() << "]";
         total+=omp_get_wtime()-startTime; 
     }
     return total;
 }
 
-double calculateSequentialLOG(vector<string> files, string inPath, string outPath){
+double calculateSerialLOG(vector<string> files, string inPath, string outPath){
     double total=0;
+    std::cout<<std::endl;
     for(int i=0;i<files.size();i++){
         double startTime=omp_get_wtime();
         string path=inPath+files[i];
@@ -70,6 +81,9 @@ double calculateSequentialLOG(vector<string> files, string inPath, string outPat
         readImageFile(tempArray);
         LOGSerial();
         writeImageFile(temp2Array);
+        int percent=(100 * (i + 1)) / files.size();
+        std::cout << "\r" << "[" << std::string(percent / 5, (char)254u) << std::string(100 / 5 - percent / 5, ' ') << "]";
+		std::cout << percent << "%" << " [Image " << i + 1 << " of " << files.size() << "]";
         total+=omp_get_wtime()-startTime;
     }
     return total;
@@ -77,14 +91,17 @@ double calculateSequentialLOG(vector<string> files, string inPath, string outPat
 
 double calculateParallelBlur(vector<string> files, string inPath, string outPath){
     double total=0;
+    std::cout<<std::endl;
     for(int i=0;i<files.size();i++){
-        std::cout<<i<<endl;
         double startTime=omp_get_wtime();
         string path=inPath+files[i];
         char* tempArray=&path[0];
         string path2=outPath+files[i];
         char* temp2Array=&path2[0];
         blurParallel(tempArray,temp2Array);
+        int percent=(100 * (i + 1)) / files.size();
+        std::cout << "\r" << "[" << std::string(percent / 5, (char)254u) << std::string(100 / 5 - percent / 5, ' ') << "]";
+		std::cout << percent << "%" << " [Image " << i + 1 << " of " << files.size() << "]";
         total+=omp_get_wtime()-startTime;
     }
     return total;
@@ -92,14 +109,17 @@ double calculateParallelBlur(vector<string> files, string inPath, string outPath
 
 double calculateSerialBlur(vector<string> files, string inPath, string outPath){
     double total=0;
+    std::cout<<std::endl;
     for(int i=0;i<files.size();i++){
-        std::cout<<i<<endl;
         double startTime=omp_get_wtime();
         string path=inPath+files[i];
         char* tempArray=&path[0];
         string path2=outPath+files[i];
         char* temp2Array=&path2[0];
         blurSerial(tempArray,temp2Array);
+        int percent=(100 * (i + 1)) / files.size();
+        std::cout << "\r" << "[" << std::string(percent / 5, (char)254u) << std::string(100 / 5 - percent / 5, ' ') << "]";
+		std::cout << percent << "%" << " [Image " << i + 1 << " of " << files.size() << "]";
         total+=omp_get_wtime()-startTime;
     }
     return total;
@@ -107,14 +127,17 @@ double calculateSerialBlur(vector<string> files, string inPath, string outPath){
 
 double calculateSerialStretch(vector<string> files, string inPath, string outPath){
     double total=0;
+    std::cout<<std::endl;
     for(int i=0;i<files.size();i++){
-        std::cout<<i<<endl;
         double startTime=omp_get_wtime();
         string path=inPath+files[i];
         char* tempArray=&path[0];
         string path2=outPath+files[i];
         char* temp2Array=&path2[0];
         contrastStretchSerial(tempArray,temp2Array);
+        int percent=(100 * (i + 1)) / files.size();
+        std::cout << "\r" << "[" << std::string(percent / 5, (char)254u) << std::string(100 / 5 - percent / 5, ' ') << "]";
+		std::cout << percent << "%" << " [Image " << i + 1 << " of " << files.size() << "]";
         total+=omp_get_wtime()-startTime;
     }
     return total;
@@ -122,6 +145,7 @@ double calculateSerialStretch(vector<string> files, string inPath, string outPat
 
 double calculateParallelStretch(vector<string> files, string inPath, string outPath){
     double total=0;
+    std::cout<<std::endl;
     for(int i=0;i<files.size();i++){
         double startTime=omp_get_wtime();
         string path=inPath+files[i];
@@ -129,7 +153,9 @@ double calculateParallelStretch(vector<string> files, string inPath, string outP
         string path2=outPath+files[i];
         char* temp2Array=&path2[0];
         contrastStretchParallel(tempArray,temp2Array);
-        std::cout<<i<<endl;
+        int percent=(100 * (i + 1)) / files.size();
+        std::cout << "\r" << "[" << std::string(percent / 5, (char)254u) << std::string(100 / 5 - percent / 5, ' ') << "]";
+		std::cout << percent << "%" << " [Image " << i + 1 << " of " << files.size() << "]";
         total+=omp_get_wtime()-startTime;
     }
     return total;
@@ -140,8 +166,4 @@ int main(){
     string outPathParallel="./outputs/parallel/";
     string outPathSequential="./outputs/sequential/";
     vector<string> files=generateFileList(dataPath);
-    double parallel=calculateParallelStretch(files,dataPath,outPathParallel);
-    double seq=calculateSerialStretch(files,dataPath,outPathSequential);
-    cout<<"Parallel time on "<<files.size()<<" images: " <<parallel<<endl;
-    cout<<"Sequential time on "<<files.size()<<" images: "<<seq<<endl;
 }

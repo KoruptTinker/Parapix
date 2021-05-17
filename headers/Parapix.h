@@ -1,7 +1,5 @@
 //SequentialEdgeDetection.cpp definitions
-void edgeDetect();
-void readImage(char fileName[]);
-void writeImage(char fileName[]);
+void seqEdge(char inputName[], char outputName[]);
 
 //ParallelEdgeDetection.cpp definitions
 void edgeDetection(char filename[],char out[]);
