@@ -105,13 +105,43 @@ double calculateSerialBlur(vector<string> files, string inPath, string outPath){
     return total;
 }
 
+double calculateSerialStretch(vector<string> files, string inPath, string outPath){
+    double total=0;
+    for(int i=0;i<files.size();i++){
+        std::cout<<i<<endl;
+        double startTime=omp_get_wtime();
+        string path=inPath+files[i];
+        char* tempArray=&path[0];
+        string path2=outPath+files[i];
+        char* temp2Array=&path2[0];
+        contrastStretchSerial(tempArray,temp2Array);
+        total+=omp_get_wtime()-startTime;
+    }
+    return total;
+}
+
+double calculateParallelStretch(vector<string> files, string inPath, string outPath){
+    double total=0;
+    for(int i=0;i<files.size();i++){
+        double startTime=omp_get_wtime();
+        string path=inPath+files[i];
+        char* tempArray=&path[0];
+        string path2=outPath+files[i];
+        char* temp2Array=&path2[0];
+        contrastStretchParallel(tempArray,temp2Array);
+        std::cout<<i<<endl;
+        total+=omp_get_wtime()-startTime;
+    }
+    return total;
+}
+
 int main(){
     string dataPath="./data/test_data/test/";
     string outPathParallel="./outputs/parallel/";
     string outPathSequential="./outputs/sequential/";
     vector<string> files=generateFileList(dataPath);
-    double parallel=calculateParallelBlur(files,dataPath,outPathParallel);
-    double seq=calculateSerialBlur(files,dataPath,outPathSequential);
+    double parallel=calculateParallelStretch(files,dataPath,outPathParallel);
+    double seq=calculateSerialStretch(files,dataPath,outPathSequential);
     cout<<"Parallel time on "<<files.size()<<" images: " <<parallel<<endl;
     cout<<"Sequential time on "<<files.size()<<" images: "<<seq<<endl;
 }

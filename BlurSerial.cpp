@@ -157,30 +157,3 @@ void blurSerial(char inputName[],char outputName[])
     free(maskedImgG);
     free(maskedImgB);
 }
-
-// int main() 
-// {
-//     cout<<"Enter the size of Mask:"<<endl;
-//     cin>>maskDim;
-//     double start = omp_get_wtime();
-//     for(int i=1;i<=8;i++)
-//     {
-//         string str="D://Workplace//BlurImage//Testing//photo"+to_string(i)+".png";
-//         char p[str.size()+1];
-//         str.copy(p,str.size()+1);
-//         p[str.size()]='\0';
-//         string res="D://Workplace//BlurImage//Blurred//result"+to_string(i)+".png";
-//         char s[res.size()+1];
-//         res.copy(s,res.size()+1);
-//         s[res.size()]='\0';
-//         read_png_file(p);
-//         process_png_file();
-//         write_png_file(s);
-//     }
-//     free(maskMat);
-//     double end = omp_get_wtime();
-//     cout<<"Serial"<<endl;
-//     cout<<"Time taken is "<<(end-start)<<endl;
-//     system("pause");
-//     return 0;
-// }
