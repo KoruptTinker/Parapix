@@ -13,3 +13,9 @@ void LOGParallel(char fileName[], char outputFileName[]);
 void readImageFile(char fileName[]);
 void writeImageFile (char fileName[]);
 void LOGSerial();
+
+//BlurParallel.cpp definitions
+void blurParallel(char inputName[],char outputName[]);
+
+//BlurSerial definitions
+void blurSerial(char inputName[],char outputName[]);

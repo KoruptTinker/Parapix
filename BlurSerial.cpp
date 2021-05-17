@@ -1,3 +1,4 @@
+#include "./headers/Parapix.h"
 #include<iostream>
 #include<cstdlib>
 #include<cstring>
@@ -5,16 +6,15 @@
 #include<omp.h>
 using namespace std;
 
-int width,height;
-png_byte color_type;
-png_byte bit_depth;
-png_bytep *row_pointers = NULL;
-int maskDim;
-int **maskMat;
-
-void read_png_file(char *file_name) 
+void blurSerial(char inputName[],char outputName[]) 
 {
-    FILE *fp = fopen(file_name, "rb");
+    int width,height;
+    png_byte color_type;
+    png_byte bit_depth;
+    png_bytep *row_pointers = NULL;
+    int maskDim=6;
+    int maskMat[6][6]={1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1};
+    FILE *fp = fopen(inputName, "rb");
     png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
     if(!png) 
         abort();
@@ -54,37 +54,7 @@ void read_png_file(char *file_name)
     png_read_image(png, row_pointers); 
     fclose(fp);
     png_destroy_read_struct(&png, &info, NULL);
-}
 
-void write_png_file(char *file_name) 
-{
-    FILE *fp = fopen(file_name, "wb");
-    if (!fp)
-        abort();
-    png_structp png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-    if (!png) 
-        abort();
-    png_infop info = png_create_info_struct(png);
-    if (!info) 
-        abort();
-    if (setjmp(png_jmpbuf(png))) 
-        abort();
-    png_init_io(png, fp);
-
-    // Output is 8bit depth, RGBa format.
-    png_set_IHDR(png,info,width,height,8,PNG_COLOR_TYPE_RGBA,PNG_INTERLACE_NONE,PNG_COMPRESSION_TYPE_DEFAULT,PNG_FILTER_TYPE_DEFAULT);
-    png_write_info(png, info);
-
-    if (!row_pointers) 
-        abort();
-    png_write_image(png, row_pointers);
-    png_write_end(png, NULL);
-    fclose(fp);
-    png_destroy_write_struct(&png, &info);
-}
-
-void maskRGB()
-{
     int size =  height * width;
     int maskD = maskDim * maskDim;
     int averageR,averageG,averageB;
@@ -158,44 +128,59 @@ void maskRGB()
             x++;
         }
     }
+
+    
+    fp = fopen(outputName, "wb");
+    if (!fp)
+        abort();
+    png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    if (!png) 
+        abort();
+    info = png_create_info_struct(png);
+    if (!info) 
+        abort();
+    if (setjmp(png_jmpbuf(png))) 
+        abort();
+    png_init_io(png, fp);
+
+    // Output is 8bit depth, RGBa format.
+    png_set_IHDR(png,info,width,height,8,PNG_COLOR_TYPE_RGBA,PNG_INTERLACE_NONE,PNG_COMPRESSION_TYPE_DEFAULT,PNG_FILTER_TYPE_DEFAULT);
+    png_write_info(png, info);
+
+    if (!row_pointers) 
+        abort();
+    png_write_image(png, row_pointers);
+    png_write_end(png, NULL);
+    fclose(fp);
+    png_destroy_write_struct(&png, &info);
+    free(maskedImgR);
+    free(maskedImgG);
+    free(maskedImgB);
 }
 
-void process_png_file() 
-{
-    maskMat = (int**)malloc(maskDim*sizeof(int*));
-    for(int i=0;i<maskDim;i++)
-        maskMat[i] = (int*)malloc(maskDim*sizeof(int));
-    for(int i=0;i<maskDim;i++)
-    {
-        for(int j=0;j<maskDim;j++)
-            maskMat[i][j]=1;
-    }
-    maskRGB();
-}
-
-int main() 
-{
-    cout<<"Enter the size of Mask:"<<endl;
-    cin>>maskDim;
-    double start = omp_get_wtime();
-    for(int i=1;i<=8;i++)
-    {
-        string str="D://Workplace//BlurImage//Testing//photo"+to_string(i)+".png";
-        char p[str.size()+1];
-        str.copy(p,str.size()+1);
-        p[str.size()]='\0';
-        string res="D://Workplace//BlurImage//Blurred//result"+to_string(i)+".png";
-        char s[res.size()+1];
-        res.copy(s,res.size()+1);
-        s[res.size()]='\0';
-        read_png_file(p);
-        process_png_file();
-        write_png_file(s);
-    }
-    free(maskMat);
-    double end = omp_get_wtime();
-    cout<<"Serial"<<endl;
-    cout<<"Time taken is "<<(end-start)<<endl;
-    system("pause");
-    return 0;
-}
+// int main() 
+// {
+//     cout<<"Enter the size of Mask:"<<endl;
+//     cin>>maskDim;
+//     double start = omp_get_wtime();
+//     for(int i=1;i<=8;i++)
+//     {
+//         string str="D://Workplace//BlurImage//Testing//photo"+to_string(i)+".png";
+//         char p[str.size()+1];
+//         str.copy(p,str.size()+1);
+//         p[str.size()]='\0';
+//         string res="D://Workplace//BlurImage//Blurred//result"+to_string(i)+".png";
+//         char s[res.size()+1];
+//         res.copy(s,res.size()+1);
+//         s[res.size()]='\0';
+//         read_png_file(p);
+//         process_png_file();
+//         write_png_file(s);
+//     }
+//     free(maskMat);
+//     double end = omp_get_wtime();
+//     cout<<"Serial"<<endl;
+//     cout<<"Time taken is "<<(end-start)<<endl;
+//     system("pause");
+//     return 0;
+// }
