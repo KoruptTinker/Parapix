@@ -166,4 +166,8 @@ int main(){
     string outPathParallel="./outputs/parallel/";
     string outPathSequential="./outputs/sequential/";
     vector<string> files=generateFileList(dataPath);
+    double parallel=calculateParallelEdge(files,dataPath,outPathParallel);
+    double seq=calculateSerialEdge(files,dataPath,outPathSequential);
+    std::cout<<parallel<<std::endl;
+    std::cout<<seq<<std::endl;
 }
