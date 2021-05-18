@@ -4,6 +4,7 @@
 #include "nesting.h"
 #include <QFileDialog>
 #include <QMessageBox>
+#include <iostream>
 
 Layouts::Layouts(QWidget *parent)
     : QWidget(parent) {
@@ -59,7 +60,6 @@ Layouts::Layouts(QWidget *parent)
   uploadFile_button->setPalette(pal1);
   uploadFile_button->update();
 
-
   vbox->setSpacing(30);  //Add space between buttons
   vbox->addWidget(uploadFile_button);
   vbox->addStretch(1);
@@ -73,13 +73,28 @@ Layouts::Layouts(QWidget *parent)
   hbox->addSpacing(15);
   hbox->addLayout(vbox);
 
+  this->connect(log_button,SIGNAL(clicked()),this,SLOT(log_button_clicked()));
+  this->connect(contrastStetching_button,SIGNAL(clicked()), this, SLOT(contrast_button_clicked()));
+  this->connect(bluring_button,SIGNAL(clicked()),this,SLOT(blur_button_clicked()));
+  this->connect(edgeDetection_button,SIGNAL(clicked()),this,SLOT(edge_button_clicked()));
+
   setLayout(hbox);
 
 }
 
-//void Layouts::on_pushButton_clicked()
-//{
-//    QString file_name=QFileDialog::getOpenFileName(this,"Open a file","C://");
-//    QMessageBox::information(this,"..",file_name);
-//}
+void Layouts::log_button_clicked(){
+  std::cout<<"LOG"<<std::endl;
+}
+
+void Layouts::contrast_button_clicked(){
+  std::cout<<"Contrast"<<std::endl;
+}
+
+void Layouts::blur_button_clicked(){
+  std::cout<<"Blur"<<std::endl;
+}
+
+void Layouts::edge_button_clicked(){
+  std::cout<<"Edge"<<std::endl;
+}
 
