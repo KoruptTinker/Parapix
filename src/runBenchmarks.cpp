@@ -161,13 +161,13 @@ double calculateParallelStretch(vector<string> files, string inPath, string outP
     return total;
 }
 
-int main(){
-    string dataPath="./data/test_data/test/";
-    string outPathParallel="./outputs/parallel/";
-    string outPathSequential="./outputs/sequential/";
-    vector<string> files=generateFileList(dataPath);
-    double parallel=calculateParallelEdge(files,dataPath,outPathParallel);
-    double seq=calculateSerialEdge(files,dataPath,outPathSequential);
-    std::cout<<parallel<<std::endl;
-    std::cout<<seq<<std::endl;
-}
+// int main(){
+//     string dataPath="./data/test_data/test/";
+//     string outPathParallel="./outputs/parallel/";
+//     string outPathSequential="./outputs/sequential/";
+//     vector<string> files=generateFileList(dataPath);
+//     double parallel=calculateParallelEdge(files,dataPath,outPathParallel);
+//     double seq=calculateSerialEdge(files,dataPath,outPathSequential);
+//     std::cout<<parallel<<std::endl;
+//     std::cout<<seq<<std::endl;
+// }
