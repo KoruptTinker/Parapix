@@ -10,22 +10,27 @@ CONFIG += c++11
 
 SOURCES += \
     main.cpp \
-    nesting.cpp \
-    ./src/BlurParallel.cpp \
-    ./src/BlurSerial.cpp \
-    ./src/ContrastStretchParallel.cpp \
-    ./src/ContrastStretchSerial.cpp \
-    ./src/EdgeDetectionParallel.cpp \
-    ./src/EdgeDetectionSerial.cpp \
-    ./src/LOGParallel.cpp \
-    ./src/LOGSerial.cpp \
-    ./src/runBenchmarks.cpp
+    mainwindow.cpp \
+    src/BlurParallel.cpp \
+    src/BlurSerial.cpp \
+    src/ContrastStretchParallel.cpp \
+    src/ContrastStretchSerial.cpp \
+    src/EdgeDetectionParallel.cpp \
+    src/EdgeDetectionSerial.cpp \
+    src/LOGParallel.cpp \
+    src/LOGSerial.cpp \
+    src/runBenchmarks.cpp
 
 HEADERS += \
-    nesting.h \
-    ./src/headers/Parapix.h
+    mainwindow.h \
+    src/headers/Parapix.h
 
-FORMS +=
+FORMS += \
+    mainwindow.ui
+
+QMAKE_CXXFLAGS += -fopenmp
+
+LIBS += -fopenmp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

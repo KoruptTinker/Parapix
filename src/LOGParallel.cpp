@@ -239,15 +239,3 @@ void LOGParallel(char filename[], char outputFileName[])
 
   png_destroy_write_struct(&png, &info);
 }
-
-// int main()
-// {
-//   double startTime = omp_get_wtime();
-//   char inputImage[] = "./Image.png";
-//   char outputImage[] = "./LOG_Parallel_Result.png";
-//   laplacianOfGaussian(inputImage, outputImage);
-//   double endTime = omp_get_wtime();
-//   printf("%lf", endTime - startTime);
-
-//   return 0;
-// }

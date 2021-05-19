@@ -2,3 +2,4 @@
 *.exe
 .vscode
 *.pro.user
+*.qmake.stash
