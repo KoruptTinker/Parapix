@@ -36,7 +36,7 @@ make && make clean
 
 3. The files need to be compiled before they can be run.
 ```bash
-g++ -o [filename] -fopenmp [algofile.cpp] [algofile2.cpp] runBenchmarks.cpp -libpng --std=c++17 -lstdc++
+g++ -o [filename] -fopenmp [algofileParallel.cpp] [algofileSerial.cpp] runBenchmarks.cpp -libpng --std=c++17 -lstdc++
 ```
 
 4. Run the compiled file for an extensive benchmark of the application
